@@ -1,4 +1,4 @@
-package AST;
+package ast;
 import java.util.ArrayList;
 
 public class F extends BaseClass

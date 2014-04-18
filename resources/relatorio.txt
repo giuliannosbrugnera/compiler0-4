@@ -1,6 +1,6 @@
 ============================================================
 
-Relatório Compilador 0-3
+Relatório Compilador 0-4
 
 Giulianno Raphael Sbrugnera - 408093
 Matheus Casarin Paez 		- 438308
@@ -12,11 +12,11 @@ Matheus Casarin Paez 		- 438308
 ==============================
 ======== Visão Geral =========
 ==============================
-Nesta fase 03, há a criação da AST (Abstract Syntax Tree). Nossa estratégia foi criar uma classe abstrata geral, onde as demais classes herdam
+Nesta fase 04, há a criação da AST (Abstract Syntax Tree). Nossa estratégia foi criar uma classe abstrata geral, onde as demais classes herdam
 o seu método genC(), que cuida da geração do código em linguagem C. Cada sub classe implementa esse método de forma distinta e única.
 As classes são os símbolos não-terminais da nossa gramática.
 
-Para o analisador sintático, nesta fase 3, foi utilizado a construção de uma AST (Abstract Syntax Tree), como mencionado acima.
+Para o analisador sintático, nesta fase 4, foi utilizado a construção de uma AST (Abstract Syntax Tree), como mencionado acima.
 
 Há um método denominado error, para o caso de haver algum erro na entrada.
 

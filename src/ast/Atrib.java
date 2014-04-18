@@ -1,4 +1,4 @@
-package AST;
+package ast;
 
 public class Atrib extends BaseClass
 {

@@ -1,4 +1,4 @@
-package AST;
+package ast;
 
 abstract public class BaseClass
 {
