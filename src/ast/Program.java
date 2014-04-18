@@ -1,21 +1,25 @@
 package ast;
-import java.util.ArrayList;
+
+import java.util.*;
 
 public class Program extends BaseClass
 {	
 	private ArrayList<Line> list;
+	private Hashtable<Character, Variable> symbolTable;
 	
-	public Program(ArrayList<Line> list)
-	{
-		this.list = list;	
+	public Program(ArrayList<Line> list, Hashtable<Character, Variable> symbolTable) {
+		this.list = list;
+		this.symbolTable = symbolTable;
 	}
 	
-	public void genC()
-	{
+	public void genC() {
 		System.out.println("#include <stdio.h>\nint main(){");
 		
-		for(Line v:list)
-		{
+		for (Map.Entry<Character, Variable> entry : symbolTable.entrySet()) {
+ 		    System.out.println("\tint " + entry.getKey() + ";");
+ 		}
+		
+		for(Line v:list){
 			v.genC();
 		}
 		

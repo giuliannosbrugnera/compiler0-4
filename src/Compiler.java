@@ -13,88 +13,125 @@
  * ================================================================== */
 
 import ast.*;
-import java.util.ArrayList;
+import java.util.*;
+
 
 public class Compiler {
 
-    public Program compile(char []p_input)
-    {
+	private char token;
+    private int  tokenPos;
+    private char []input;
+    private int flag = 0;
+    private Hashtable<Character, Variable> symbolTable;
+	
+    public Program compile(char []p_input) {
         input = p_input;
         tokenPos = 0;
+ 		symbolTable = new Hashtable<Character, Variable>();
+ 		
+ 		lookForVariables();
+ 		
         nextToken();
 
         Program e = program();
         
-        if (tokenPos != input.length)
-        {
+        if (tokenPos != input.length) {
             error();
         }
 
         return e;
     }
+    
+    // Metodo que percorre toda a entrada. Quando encontra uma variavel,
+    // ela eh adicionada a tabela hash de variaveis.
+    // Ao final do metodo, a posicao do token eh setada para zero.
+    private void lookForVariables() {
+    	Variable variable = null;
+    	boolean var;
+    	
+    	while (tokenPos < input.length) {
+    		var = true;
+    		nextToken();
+    		
+    		// Necessario verificar se a letra nao faz parte do comando
+			// 'write'. Pela gramatica, uma variavel eh composta por
+    		// apenas uma letra, logo nao deve haver letras antes ou
+    		// depois da letra da variavel.
+    		if (Character.isLetter(token)) {
+    			if (tokenPos - 2 >= 0) {
+    				if (Character.isLetter(input[tokenPos - 2])) {
+    					var = false;
+    				}
+    			}
+    			if (Character.isLetter(input[tokenPos])) {
+    				var = false;
+    			}
+    			
+    			if (var) {
+					// variavel
+    				variable = new Variable(token);
+    				symbolTable.put(token, variable);
+    			}
+    		}
+    	}
+    	
+    	tokenPos = 0;
+    }
 
     // Program ::= {Line}
-    private Program program()
-    {
+    private Program program() {
         Line line = null;
         ArrayList lines = null;
         
-    	while (((input[tokenPos - 1] == 'w') && (input[tokenPos] == 'r') && (input[tokenPos + 1] == 'i') && (input[tokenPos + 2] == 't') && (input[tokenPos + 3] == 'e')) || (Character.isLetter(token)))
-        {
+    	while (((input[tokenPos - 1] == 'w') && 
+    			(input[tokenPos] == 'r') && 
+    			(input[tokenPos + 1] == 'i') && 
+    			(input[tokenPos + 2] == 't') && 
+    			(input[tokenPos + 3] == 'e')) || 
+    			(Character.isLetter(token))) {
             line = line();
 
-            if (lines == null)
-            {
+            if (lines == null) {
                 lines = new ArrayList<Line>();
             }
 
             lines.add(line);
 
-            if (token == ';')
-            {
+            if (token == ';') {
                 nextToken();
             }
 
-            if (tokenPos >= input.length)
-            {
+            if (tokenPos >= input.length) {
                 break;
             }
-
         }
 
-    	return new Program(lines);
+    	return new Program(lines, symbolTable);
     }
 
     // Line ::= (Write | Atrib) ';'
-    private Line line()
-    {
+    private Line line() {
         Write write = null;
         Atrib atrib = null;
 
-        if ((input[tokenPos - 1] == 'w') && (input[tokenPos] == 'r') && (input[tokenPos + 1] == 'i') && (input[tokenPos + 2] == 't') && (input[tokenPos + 3] == 'e'))
-        {
+        if ((input[tokenPos - 1] == 'w') && (input[tokenPos] == 'r') && (input[tokenPos + 1] == 'i') && (input[tokenPos + 2] == 't') && (input[tokenPos + 3] == 'e')) {
             // comando write
             write = write();
 
-            if (token != ';')
-            {
+            if (token != ';') {
                 error();
             }
         }
-        else
-        {
-            if (Character.isLetter(token))
-            {
+        else {
+            if (Character.isLetter(token)) {
                 // atribuição
                 atrib = atrib();
 
-                if (token != ';')
-                {
+                if (token != ';') {
                     error();
                 }
             }
-            else
-            {
+            else {
                 error();
             }
         }
@@ -103,8 +140,7 @@ public class Compiler {
     }
 
     // Write ::= 'Write' '(' expr ')'
-    private Write write()
-    {
+    private Write write() {
         Expr expr = null;
         
         nextToken();
@@ -113,21 +149,17 @@ public class Compiler {
         nextToken();
         nextToken();
 
-        if (token == '(')
-        {
+        if (token == '(') {
             nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token)))
-            {
+            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
                 expr = expr();
             }
-            else
-            {
+            else {
                 error();
             }
 
-            if (token != ')')
-            {
+            if (token != ')') {
                 error();
             }
             
@@ -135,8 +167,7 @@ public class Compiler {
 
             return new Write(expr);
         }
-        else
-        {
+        else {
             error();
         }
 
@@ -144,35 +175,28 @@ public class Compiler {
     }
 
     // Atrib ::= var '=' expr
-    private Atrib atrib()
-    {
+    private Atrib atrib() {
         char var = 0;
         Expr expr = null;
 
-        if (Character.isLetter(token))
-        {
+        if (Character.isLetter(token)) {
             var = var();
         }
-        else
-        {
+        else {
             error();
         }
 
-        if (token == '=')
-        {
+        if (token == '=') {
             nextToken();
         }
-        else
-        {
+        else {
             error();
         }
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token)))
-        {
+        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
             expr = expr();
         }
-        else
-        {
+        else {
             error();
         }
 
@@ -180,22 +204,18 @@ public class Compiler {
     }
 
     // expr ::= t ei
-    private Expr expr() 
-    {
+    private Expr expr() {
         T t = null;
         Ei ei = null;
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token))) 
-        {
+        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
             t = t();
         }
-        else 
-        {
+        else {
             error();
         }
 
-        if (token == '+')
-        {
+        if (token == '+') {
             ei = ei();
         }
 
@@ -203,26 +223,21 @@ public class Compiler {
     }
 
     // ei ::= '+' t ei |
-    private Ei ei()
-    {
+    private Ei ei() {
         T t = null;
         Ei ei = null;
 
-        if (token == '+')
-        {
+        if (token == '+') {
             nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token))) 
-            {
+            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
                 t = t();
             }
-            else
-            {
+            else {
                 error();
             }
 
-            if (token == '+')
-            {
+            if (token == '+') {
                 ei = ei();
             }
         }
@@ -231,22 +246,18 @@ public class Compiler {
     }
 
     // t ::= f ti
-    private T t()
-    {
+    private T t() {
         F f = null;
         Ti ti = null;
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token)))
-        {
+        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
             f = f();
         }
-        else
-        {
+        else {
             error();
         }
 
-        if (token == '*')
-        {
+        if (token == '*') {
             ti = ti();
         }
 
@@ -254,26 +265,21 @@ public class Compiler {
     }
 
     // ti ::= '*' f ti |
-    private Ti ti()
-    {
+    private Ti ti() {
         F f = null;
         Ti ti = null;
 
-        if (token == '*')
-        {
+        if (token == '*') {
             nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token)))
-            {
+            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
                 f = f();
             }
-            else
-            {
+            else {
                 error();
             }
 
-            if (token == '*')
-            {
+            if (token == '*') {
                 ti = ti();
             }
         }
@@ -282,23 +288,18 @@ public class Compiler {
     }
 
     // f ::= number | var
-    private F f()
-    {
+    private F f() {
         ArrayList<Character> number = null;
         char var = 0;
 
-        if (Character.isDigit(token))
-        {
+        if (Character.isDigit(token)) {
             number = number();
         }
-        else
-        {
-            if (Character.isLetter(token))
-            {
+        else {
+            if (Character.isLetter(token)) {
                 var = var();
             }
-            else
-            {
+            else {
                 error();
             }
         }
@@ -307,22 +308,18 @@ public class Compiler {
     }
 
     // number ::= digit {[digit]}
-    private ArrayList<Character> number() 
-    {
+    private ArrayList<Character> number() {
         ArrayList<Character> number = null;
 
-        if (Character.isDigit(token)) 
-        {
+        if (Character.isDigit(token)) {
             number = new ArrayList<Character>();
             number.add(digit());
         }
-        else 
-        {
+        else {
             error();
         }
 
-        while (Character.isDigit(token))
-        {
+        while (Character.isDigit(token)) {
             number.add(digit());
         }
 
@@ -330,18 +327,15 @@ public class Compiler {
     }
 
     // digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    private char digit()
-    {
+    private char digit() {
         char aux = 0;
 
-        if (Character.isDigit(token)) 
-        {
+        if (Character.isDigit(token)) {
             aux = token;
             flag = 1;
             nextToken();
         }
-        else 
-        {
+        else {
             error();
         }
 
@@ -349,44 +343,36 @@ public class Compiler {
     }
 
     // var ::= 'a' | ... | 'z'
-    private char var()
-    {
+    private char var() {
         char aux = 0;
 
-        if (Character.isLetter(token))
-        {
+        if (Character.isLetter(token)) {
             aux = token;
             nextToken();
         }
-        else
-        {
+        else {
             error();
         }
         
         return aux;
     }
 
-    private void nextToken() 
-    {
-        while (tokenPos < input.length && input[tokenPos] == ' ') 
-        {
-            if (input[tokenPos] == ' ' && flag == 1)
-            {
+    private void nextToken() {
+        while (tokenPos < input.length && input[tokenPos] == ' ') {
+            if (input[tokenPos] == ' ' && flag == 1) {
                 flag = 2;
             }
 
             tokenPos++;
         }
         
-        if((flag == 2) && ((Character.isDigit(input[tokenPos]))))
-        {
+        if((flag == 2) && ((Character.isDigit(input[tokenPos])))) {
               error();
         }
 
         flag = 0;
 
-        if (tokenPos < input.length) 
-        {
+        if (tokenPos < input.length) {
             token = input[tokenPos];
             tokenPos++;
         }
@@ -403,11 +389,5 @@ public class Compiler {
         String strError = "Error at \"" + strInput + "\"";
         System.out.println( strError );
         throw new RuntimeException(strError);
-    }
-    
-    private char token;
-    private int  tokenPos;
-    private char []input;
-    private int flag = 0;
-      
+    }      
 }
