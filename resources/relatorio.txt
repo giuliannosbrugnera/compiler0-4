@@ -1,0 +1,83 @@
+============================================================
+
+Relatório Compilador 0-3
+
+Giulianno Raphael Sbrugnera - 408093
+Matheus Casarin Paez 		- 438308
+
+============================================================
+
+
+
+==============================
+======== Visão Geral =========
+==============================
+Nesta fase 03, há a criação da AST (Abstract Syntax Tree). Nossa estratégia foi criar uma classe abstrata geral, onde as demais classes herdam
+o seu método genC(), que cuida da geração do código em linguagem C. Cada sub classe implementa esse método de forma distinta e única.
+As classes são os símbolos não-terminais da nossa gramática.
+
+Para o analisador sintático, nesta fase 3, foi utilizado a construção de uma AST (Abstract Syntax Tree), como mencionado acima.
+
+Há um método denominado error, para o caso de haver algum erro na entrada.
+
+Para o analisador léxico, foi utilizado o método nextToken. Este método passa para a variável token o próximo token válido. Ele também trata o caso de haver inúmeros espaços entre dois dígitos em uma expressão, configurando um erro.
+
+Não especificamos com parênteses a precedência das operações, mas o nosso compilador segue a precedência estipulada, ou seja, o operador '*' possui uma maior precedência em relação ao operador '+'.
+
+
+
+==============================
+=== Definição da Gramática ===
+==============================
+Segue abaixo a gramática utilizada como base para a implementação do nosso compilador.
+
+Uma gramática G é especificada através de uma quádrupla (V, T, P, S) onde
+V é conjunto de símbolos não-terminais
+T é conjunto de símbolos terminais
+P é o conjunto de produções
+S é o símbolo não-terminal inicial da gramática
+
+Dessa forma, podemos definir nossa gramática G da maneira descrita abaixo.
+Espaços em branco são apenas para uma melhor visualização, e devem ser desconsiderados.
+A palavra 'vazio' representa a letra grega épsilon, a qual representa o vazio por si.
+
+G = (V, T, P, S)
+
+V = {Program, Line, Write, Atrib, expr, ei, t, ti, f, digit, number, var, vazio}
+T = {';', '(', ')', '=', '+', '*', '0', ..., '9', 'a', ..., 'z'}
+P = {
+		Program ::= {Line}
+	    Line    ::= (Write | Atrib) ';'
+	    Write   ::= 'Write' '(' expr ')'
+	    Atrib   ::= var '=' expr
+	    expr    ::= t ei
+	    ei      ::= '+' t ei | vazio
+	    t       ::= f ti
+	    ti      ::= '*' f ti | vazio
+	    f       ::= number | var
+	    number  ::= digit {[digit]}
+	    digit   ::= '0' | ... | '9'
+	    var     ::= 'a' | ... | 'z'
+	}
+S = Program
+
+A seguir descreveremos o que cada símbolo representa.
+- Program representa todo o conjunto de instruções.
+- Line representa uma linha do conjunto de instruções (por exemplo, 'write(10);').
+- Write representa o comando 'write'.
+- Atrib representa uma atribuição.
+- expr representa uma expressão.
+- oper representa um operando.
+- digit representa um dígito de um número.
+- number representa um número.
+- var representa uma variável.
+
+
+
+==============================
+======== Dificuldades ========
+==============================
+A nossa maior dificuldade foi realmente montar a AST. Não sabíamos se o correto era continuar com a mesma gramática utilizada anteriormente
+ou se havia a necessidade da criação de uma nova. Por fim, decidimos continuar com a mesma, o que resultou na completude do trabalho.
+Da mesma maneira, demoramos a perceber que uma classe base geral era necessária. Assim, isso facilitaria com que todas as sub classes
+possuíssem o mesmo método gerador de código em linguagem C.
