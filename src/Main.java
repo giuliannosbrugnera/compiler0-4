@@ -18,20 +18,16 @@ import java.io.*;
 
 public class Main {
     
-	public static void main( String []args ) {
+	public static void main(String []args) {
+		int numChRead;
+        String error;
         
-    	File file;
-        FileReader stream;
-        int numChRead;
-        Program program;
-        FileOutputStream outputStream;
-        Compiler compiler;
-//    	char []input = "write(10); i = 2  5 * 10; j = 32 * i; write (j * 2 + i);".toCharArray();
-//        
-//        Compiler compiler = new Compiler();
-//        
-//        Program program = compiler.compile(input);
-//        program.genC();
+    	File file = null;
+        FileReader stream = null;
+        Program program = null;
+        FileOutputStream outputStream = null;
+        Compiler compiler = null;
+
         if (args.length != 2)  {
             System.out.println("Usage:\n   Main input output");
             System.out.println("input is the file to be compiled");
@@ -90,10 +86,21 @@ public class Main {
               
             // the generated code goes to a file and so are the errors
             try {   
-            	program  = compiler.compile(input, outputStream);
+            	program  = compiler.compile(input);
             } 
             catch (RuntimeException e) {
-                System.out.println(e);
+            	System.out.println("Ocorreu um erro durante a geração do código em linguagem C.");
+//        		System.out.println("Você encontrará o log do erro no caminho relativo " + args[1] + ".");
+            	System.out.println("Log error:");
+//                error = e.toString();
+                e.printStackTrace();
+//                try {
+//                	System.out.println("Erro:\n" + error);
+//                    outputStream.write(error.getBytes());
+//                }
+//                catch (IOException err) {
+//                	err.printStackTrace();
+//                }
             }
             
             if (program != null) {

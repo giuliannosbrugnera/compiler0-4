@@ -1,5 +1,7 @@
 package lexer;
 
+import java.io.*;
+
 public class Lexer {
 	
     public char token;
@@ -55,20 +57,28 @@ public class Lexer {
         
     public String getCurrentLine() {
         int i = lastTokenPos;
-        if ( i == 0 ) 
-          i = 1; 
-        else 
-          if ( i >= input.length )
-            i = input.length;
+        
+        if (i == 0) { 
+        	i = 1; 
+        }
+        else { 
+        	if (i >= input.length) {
+        		i = input.length;
+        	}
+        }
             
         StringBuffer line = new StringBuffer();
-          // go to the beginning of the line
-        while ( i >= 1 && input[i] != '\n' )
-          i--;
-        if ( input[i] == '\n' )
-          i++;
+        
+        // go to the beginning of the line
+        while ((i >= 1) && (input[i] != '\n' )) {
+        	i--;
+        }
+        
+        if (input[i] == '\n') {
+        	i++;
+        }
           // go to the end of the line putting it in variable line
-        while ( input[i] != '\0' && input[i] != '\n' && input[i] != '\r' ) {
+        while ((input[i] != '\0') && (input[i] != '\n') && (input[i] != '\r' )) {
             line.append( input[i] );
             i++;
         }
@@ -76,31 +86,31 @@ public class Lexer {
     }
 
     public String getStringValue() {
-       return stringValue;
+    	return stringValue;
     }
     
     public int getNumberValue() {
-       return numberValue;
+    	return numberValue;
     }
     
     public char getCharValue() {
-       return charValue;
+    	return charValue;
     }
     
     public void error(String errorCause) {
-        if ( tokenPos == 0 ) {
-          tokenPos = 1; 
+        if (tokenPos == 0) {
+        	tokenPos = 1; 
         }
         else { 
-          if ( tokenPos >= input.length ) {
-            tokenPos = input.length;
-          }
+        	if (tokenPos >= input.length) {
+        		tokenPos = input.length;
+        	}
         }
         
-        String strInput = new String( input, tokenPos - 1, input.length - tokenPos + 1 );
-        String strError = "Error at \"" + strInput + "\"";
-        System.out.println( strError );
-        System.out.println(errorCause);
+        String strInput = new String(input, tokenPos - 1, input.length - tokenPos + 1);
+        String strError = "Error at \"" + strInput + "\"\n";
+        strError += errorCause;
+        
         throw new RuntimeException(strError);
     }
 }

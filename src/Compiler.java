@@ -24,23 +24,17 @@ public class Compiler {
     private char []input;
     private Hashtable<Character, Variable> symbolTable;
 	
-    public Program compile(char []p_input, FileOutputStream outputStream) {
-        input = p_input;
- 		symbolTable = new Hashtable<Character, Variable>();
- 		lexer = new Lexer(input);
+    public Program compile(char []p_input) {
+        this.input = p_input;
+ 		this.symbolTable = new Hashtable<Character, Variable>();
+ 		this.lexer = new Lexer(input);
  		
  		lookForVariables();
-
         lexer.nextToken();
-        
-//        System.out.println("Compile method, after calling lookForVariables method.");
-// 		System.out.println("Token: " + lexer.token);
-//        System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
-
         Program e = program();
         
         if (lexer.tokenPos > input.length) {
-            lexer.error("Final do arquivo não definido corretamente.");
+            lexer.error("Final do arquivo não definido corretamente.\n");
         }
 
         return e;
@@ -86,15 +80,8 @@ public class Compiler {
     private Program program() {
         Line line = null;
         ArrayList lines = null;
-        
-//    	while (((input[lexer.tokenPos - 1] == 'w') && 
-//    			(input[lexer.tokenPos] == 'r') && 
-//    			(input[lexer.tokenPos + 1] == 'i') && 
-//    			(input[lexer.tokenPos + 2] == 't') && 
-//    			(input[lexer.tokenPos + 3] == 'e')) || 
-//    			(Character.isLetter(lexer.token))) {
+
         while (input[lexer.tokenPos] != '\0') {
-//    		System.out.println("Program method.");
     		line = line();
 
             if (lines == null) {
@@ -102,22 +89,12 @@ public class Compiler {
             }
             
             lines.add(line);
-
-//            System.out.println("Token: " + lexer.token);
-//            System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
             
             if (lexer.token == ';') {
-//            	System.out.println("nextToken chamado.");
                 lexer.nextToken();
             }
-//            if (lexer.token == '\n') {
-//            	System.out.println("TOKEN COM \\N!!!");
-//            }
-//            System.out.println("Token: " + lexer.token);
-//            System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
 
             if (lexer.tokenPos >= input.length) {
-//            	System.out.println("BLABLABLA.\n");
                 break;
             }
         }
@@ -130,13 +107,16 @@ public class Compiler {
         Write write = null;
         Atrib atrib = null;
 
-//        System.out.println("Line method.\n");
-        if ((input[lexer.tokenPos - 1] == 'w') && (input[lexer.tokenPos] == 'r') && (input[lexer.tokenPos + 1] == 'i') && (input[lexer.tokenPos + 2] == 't') && (input[lexer.tokenPos + 3] == 'e')) {
+        if ((input[lexer.tokenPos - 1] == 'w') &&
+        	(input[lexer.tokenPos] == 'r') && 
+        	(input[lexer.tokenPos + 1] == 'i') && 
+        	(input[lexer.tokenPos + 2] == 't') && 
+        	(input[lexer.tokenPos + 3] == 'e')) {
             // comando write
             write = write();
 
             if (lexer.token != ';') {
-                lexer.error("';' esperado.");
+                lexer.error("';' esperado.\n");
             }
         }
         else {
@@ -145,11 +125,11 @@ public class Compiler {
                 atrib = atrib();
 
                 if (lexer.token != ';') {
-                    lexer.error("';' esperado.");
+                    lexer.error("';' esperado.\n");
                 }
             }
             else {
-                lexer.error("Variável esperada na atribuição.");
+                lexer.error("Variável esperada na atribuição.\n");
             }
         }
 
@@ -173,11 +153,11 @@ public class Compiler {
                 expr = expr();
             }
             else {
-                lexer.error("Caractere inválido. Variável ou número esperado.");
+                lexer.error("Caractere inválido. Variável ou número esperado.\n");
             }
 
             if (lexer.token != ')') {
-                lexer.error("')' esperado.");
+                lexer.error("')' esperado.\n");
             }
             
             lexer.nextToken();
@@ -185,7 +165,7 @@ public class Compiler {
             return new Write(expr);
         }
         else {
-            lexer.error("'(' esperado.");
+            lexer.error("'(' esperado.\n");
         }
 
         return new Write(expr);
@@ -200,21 +180,21 @@ public class Compiler {
             var = var();
         }
         else {
-            lexer.error("Variável esperada na atribuição.");
+            lexer.error("Variável esperada na atribuição.\n");
         }
 
         if (lexer.token == '=') {
             lexer.nextToken();
         }
         else {
-            lexer.error("'=' esperado.");
+            lexer.error("'=' esperado.\n");
         }
 
         if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
             expr = expr();
         }
         else {
-            lexer.error("Caractere inválido. Variável ou número esperado.");
+            lexer.error("Caractere inválido. Variável ou número esperado.\n");
         }
 
         return new Atrib(var, expr);
@@ -229,7 +209,7 @@ public class Compiler {
             t = t();
         }
         else {
-            lexer.error("Caractere inválido. Variável ou número esperado.");
+            lexer.error("Caractere inválido. Variável ou número esperado.\n");
         }
 
         if (lexer.token == '+') {
@@ -251,7 +231,7 @@ public class Compiler {
                 t = t();
             }
             else {
-                lexer.error("Caractere inválido. Variável ou número esperado.");
+                lexer.error("Caractere inválido. Variável ou número esperado.\n");
             }
 
             if (lexer.token == '+') {
@@ -271,7 +251,7 @@ public class Compiler {
             f = f();
         }
         else {
-            lexer.error("Caractere inválido. Variável ou número esperado.");
+            lexer.error("Caractere inválido. Variável ou número esperado.\n");
         }
 
         if (lexer.token == '*') {
@@ -293,7 +273,7 @@ public class Compiler {
                 f = f();
             }
             else {
-                lexer.error("Caractere inválido. Variável ou número esperado.");
+                lexer.error("Caractere inválido. Variável ou número esperado.\n");
             }
 
             if (lexer.token == '*') {
@@ -317,7 +297,7 @@ public class Compiler {
                 var = var();
             }
             else {
-                lexer.error("Variável esperada.");
+                lexer.error("Variável esperada.\n");
             }
         }
 
@@ -333,7 +313,7 @@ public class Compiler {
             number.add(digit());
         }
         else {
-            lexer.error("Número esperado.");
+            lexer.error("Número esperado.\n");
         }
 
         while (Character.isDigit(lexer.token)) {
@@ -353,7 +333,7 @@ public class Compiler {
             lexer.nextToken();
         }
         else {
-            lexer.error("Número esperado.");
+            lexer.error("Número esperado.\n");
         }
 
         return aux;
@@ -368,9 +348,9 @@ public class Compiler {
             lexer.nextToken();
         }
         else {
-            lexer.error("Letra esperada.");
+            lexer.error("Letra esperada.\n");
         }
         
         return aux;
-    }      
+    }
 }

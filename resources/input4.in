@@ -1,0 +1,7 @@
+x = 10;
+x = a;
+k = 2 + 8 * 10 + 7;
+k = k + 1
+write(x + k + a * a);
+write(x * a);
+x = 10;

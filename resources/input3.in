@@ -1,0 +1,4 @@
+
+   write(x + k + a * a);
+   k = k + 1;
+writex * a);
