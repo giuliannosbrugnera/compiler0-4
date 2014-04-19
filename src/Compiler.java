@@ -13,30 +13,33 @@
  * ================================================================== */
 
 import ast.*;
+import lexer.*;
 import java.util.*;
 
 
 public class Compiler {
 
-	private char token;
-    private int  tokenPos;
+	private Lexer lexer;
+//	private char token;
+//    private int  lexer.tokenPos;
     private char []input;
-    private int flag = 0;
+//    private int flag = 0;
     private Hashtable<Character, Variable> symbolTable;
 	
     public Program compile(char []p_input) {
         input = p_input;
-        tokenPos = 0;
+//        lexer.tokenPos = 0;
  		symbolTable = new Hashtable<Character, Variable>();
+ 		lexer = new Lexer(input);
  		
  		lookForVariables();
  		
-        nextToken();
+        lexer.nextToken();
 
         Program e = program();
         
-        if (tokenPos != input.length) {
-            error();
+        if (lexer.tokenPos != input.length) {
+            lexer.error();
         }
 
         return e;
@@ -49,33 +52,33 @@ public class Compiler {
     	Variable variable = null;
     	boolean var;
     	
-    	while (tokenPos < input.length) {
+    	while (lexer.tokenPos < input.length) {
     		var = true;
-    		nextToken();
+    		lexer.nextToken();
     		
     		// Necessario verificar se a letra nao faz parte do comando
 			// 'write'. Pela gramatica, uma variavel eh composta por
     		// apenas uma letra, logo nao deve haver letras antes ou
     		// depois da letra da variavel.
-    		if (Character.isLetter(token)) {
-    			if (tokenPos - 2 >= 0) {
-    				if (Character.isLetter(input[tokenPos - 2])) {
+    		if (Character.isLetter(lexer.token)) {
+    			if (lexer.tokenPos - 2 >= 0) {
+    				if (Character.isLetter(input[lexer.tokenPos - 2])) {
     					var = false;
     				}
     			}
-    			if (Character.isLetter(input[tokenPos])) {
+    			if (Character.isLetter(input[lexer.tokenPos])) {
     				var = false;
     			}
     			
     			if (var) {
 					// variavel
-    				variable = new Variable(token);
-    				symbolTable.put(token, variable);
+    				variable = new Variable(lexer.token);
+    				symbolTable.put(lexer.token, variable);
     			}
     		}
     	}
     	
-    	tokenPos = 0;
+    	lexer.tokenPos = 0;
     }
 
     // Program ::= {Line}
@@ -83,12 +86,12 @@ public class Compiler {
         Line line = null;
         ArrayList lines = null;
         
-    	while (((input[tokenPos - 1] == 'w') && 
-    			(input[tokenPos] == 'r') && 
-    			(input[tokenPos + 1] == 'i') && 
-    			(input[tokenPos + 2] == 't') && 
-    			(input[tokenPos + 3] == 'e')) || 
-    			(Character.isLetter(token))) {
+    	while (((input[lexer.tokenPos - 1] == 'w') && 
+    			(input[lexer.tokenPos] == 'r') && 
+    			(input[lexer.tokenPos + 1] == 'i') && 
+    			(input[lexer.tokenPos + 2] == 't') && 
+    			(input[lexer.tokenPos + 3] == 'e')) || 
+    			(Character.isLetter(lexer.token))) {
             line = line();
 
             if (lines == null) {
@@ -97,11 +100,11 @@ public class Compiler {
 
             lines.add(line);
 
-            if (token == ';') {
-                nextToken();
+            if (lexer.token == ';') {
+                lexer.nextToken();
             }
 
-            if (tokenPos >= input.length) {
+            if (lexer.tokenPos >= input.length) {
                 break;
             }
         }
@@ -114,25 +117,25 @@ public class Compiler {
         Write write = null;
         Atrib atrib = null;
 
-        if ((input[tokenPos - 1] == 'w') && (input[tokenPos] == 'r') && (input[tokenPos + 1] == 'i') && (input[tokenPos + 2] == 't') && (input[tokenPos + 3] == 'e')) {
+        if ((input[lexer.tokenPos - 1] == 'w') && (input[lexer.tokenPos] == 'r') && (input[lexer.tokenPos + 1] == 'i') && (input[lexer.tokenPos + 2] == 't') && (input[lexer.tokenPos + 3] == 'e')) {
             // comando write
             write = write();
 
-            if (token != ';') {
-                error();
+            if (lexer.token != ';') {
+                lexer.error();
             }
         }
         else {
-            if (Character.isLetter(token)) {
+            if (Character.isLetter(lexer.token)) {
                 // atribuição
                 atrib = atrib();
 
-                if (token != ';') {
-                    error();
+                if (lexer.token != ';') {
+                    lexer.error();
                 }
             }
             else {
-                error();
+                lexer.error();
             }
         }
 
@@ -143,32 +146,32 @@ public class Compiler {
     private Write write() {
         Expr expr = null;
         
-        nextToken();
-        nextToken();
-        nextToken();
-        nextToken();
-        nextToken();
+        lexer.nextToken();
+        lexer.nextToken();
+        lexer.nextToken();
+        lexer.nextToken();
+        lexer.nextToken();
 
-        if (token == '(') {
-            nextToken();
+        if (lexer.token == '(') {
+            lexer.nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+            if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
                 expr = expr();
             }
             else {
-                error();
+                lexer.error();
             }
 
-            if (token != ')') {
-                error();
+            if (lexer.token != ')') {
+                lexer.error();
             }
             
-            nextToken();
+            lexer.nextToken();
 
             return new Write(expr);
         }
         else {
-            error();
+            lexer.error();
         }
 
         return new Write(expr);
@@ -179,25 +182,25 @@ public class Compiler {
         char var = 0;
         Expr expr = null;
 
-        if (Character.isLetter(token)) {
+        if (Character.isLetter(lexer.token)) {
             var = var();
         }
         else {
-            error();
+            lexer.error();
         }
 
-        if (token == '=') {
-            nextToken();
+        if (lexer.token == '=') {
+            lexer.nextToken();
         }
         else {
-            error();
+            lexer.error();
         }
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+        if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
             expr = expr();
         }
         else {
-            error();
+            lexer.error();
         }
 
         return new Atrib(var, expr);
@@ -208,14 +211,14 @@ public class Compiler {
         T t = null;
         Ei ei = null;
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+        if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
             t = t();
         }
         else {
-            error();
+            lexer.error();
         }
 
-        if (token == '+') {
+        if (lexer.token == '+') {
             ei = ei();
         }
 
@@ -227,17 +230,17 @@ public class Compiler {
         T t = null;
         Ei ei = null;
 
-        if (token == '+') {
-            nextToken();
+        if (lexer.token == '+') {
+            lexer.nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+            if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
                 t = t();
             }
             else {
-                error();
+                lexer.error();
             }
 
-            if (token == '+') {
+            if (lexer.token == '+') {
                 ei = ei();
             }
         }
@@ -250,14 +253,14 @@ public class Compiler {
         F f = null;
         Ti ti = null;
 
-        if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+        if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
             f = f();
         }
         else {
-            error();
+            lexer.error();
         }
 
-        if (token == '*') {
+        if (lexer.token == '*') {
             ti = ti();
         }
 
@@ -269,17 +272,17 @@ public class Compiler {
         F f = null;
         Ti ti = null;
 
-        if (token == '*') {
-            nextToken();
+        if (lexer.token == '*') {
+            lexer.nextToken();
 
-            if ((Character.isLetter(token)) || (Character.isDigit(token))) {
+            if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
                 f = f();
             }
             else {
-                error();
+                lexer.error();
             }
 
-            if (token == '*') {
+            if (lexer.token == '*') {
                 ti = ti();
             }
         }
@@ -292,15 +295,15 @@ public class Compiler {
         ArrayList<Character> number = null;
         char var = 0;
 
-        if (Character.isDigit(token)) {
+        if (Character.isDigit(lexer.token)) {
             number = number();
         }
         else {
-            if (Character.isLetter(token)) {
+            if (Character.isLetter(lexer.token)) {
                 var = var();
             }
             else {
-                error();
+                lexer.error();
             }
         }
 
@@ -311,15 +314,15 @@ public class Compiler {
     private ArrayList<Character> number() {
         ArrayList<Character> number = null;
 
-        if (Character.isDigit(token)) {
+        if (Character.isDigit(lexer.token)) {
             number = new ArrayList<Character>();
             number.add(digit());
         }
         else {
-            error();
+            lexer.error();
         }
 
-        while (Character.isDigit(token)) {
+        while (Character.isDigit(lexer.token)) {
             number.add(digit());
         }
 
@@ -330,13 +333,13 @@ public class Compiler {
     private char digit() {
         char aux = 0;
 
-        if (Character.isDigit(token)) {
-            aux = token;
-            flag = 1;
-            nextToken();
+        if (Character.isDigit(lexer.token)) {
+            aux = lexer.token;
+            lexer.flag = 1;
+            lexer.nextToken();
         }
         else {
-            error();
+            lexer.error();
         }
 
         return aux;
@@ -346,48 +349,48 @@ public class Compiler {
     private char var() {
         char aux = 0;
 
-        if (Character.isLetter(token)) {
-            aux = token;
-            nextToken();
+        if (Character.isLetter(lexer.token)) {
+            aux = lexer.token;
+            lexer.nextToken();
         }
         else {
-            error();
+            lexer.error();
         }
         
         return aux;
     }
 
-    private void nextToken() {
-        while (tokenPos < input.length && input[tokenPos] == ' ') {
-            if (input[tokenPos] == ' ' && flag == 1) {
-                flag = 2;
-            }
-
-            tokenPos++;
-        }
-        
-        if((flag == 2) && ((Character.isDigit(input[tokenPos])))) {
-              error();
-        }
-
-        flag = 0;
-
-        if (tokenPos < input.length) {
-            token = input[tokenPos];
-            tokenPos++;
-        }
-    }
-    
-    private void error() {
-        if ( tokenPos == 0 ) 
-          tokenPos = 1; 
-        else 
-          if ( tokenPos >= input.length )
-            tokenPos = input.length;
-        
-        String strInput = new String( input, tokenPos - 1, input.length - tokenPos + 1 );
-        String strError = "Error at \"" + strInput + "\"";
-        System.out.println( strError );
-        throw new RuntimeException(strError);
-    }      
+//    private void nextToken() {
+//        while (lexer.tokenPos < input.length && input[lexer.tokenPos] == ' ') {
+//            if (input[lexer.tokenPos] == ' ' && flag == 1) {
+//                flag = 2;
+//            }
+//
+//            lexer.tokenPos++;
+//        }
+//        
+//        if((flag == 2) && ((Character.isDigit(input[lexer.tokenPos])))) {
+//              lexer.error();
+//        }
+//
+//        flag = 0;
+//
+//        if (lexer.tokenPos < input.length) {
+//            token = input[lexer.tokenPos];
+//            lexer.tokenPos++;
+//        }
+//    }
+//    
+//    private void error() {
+//        if ( lexer.tokenPos == 0 ) 
+//          lexer.tokenPos = 1; 
+//        else 
+//          if ( lexer.tokenPos >= input.length )
+//            lexer.tokenPos = input.length;
+//        
+//        String strInput = new String( input, lexer.tokenPos - 1, input.length - lexer.tokenPos + 1 );
+//        String strError = "Error at \"" + strInput + "\"";
+//        System.out.println( strError );
+//        throw new RuntimeException(strError);
+//    }      
 }
