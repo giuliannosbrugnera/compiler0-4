@@ -1,23 +1,21 @@
 package ast;
 
-public class Expr extends BaseClass
-{
+import java.io.*;
+
+public class Expr {
 	private T t;
 	private Ei ei;
 
-	public Expr(T t, Ei ei)
-	{
+	public Expr(T t, Ei ei) {
 		this.t = t;
 		this.ei = ei;
 	}
 
-	public void genC()
-	{
-        t.genC();
+	public void genC(FileOutputStream outputStream) {
+        t.genC(outputStream);
 
-        if (ei != null)
-        {
-        	ei.genC();
+        if (ei != null) {
+        	ei.genC(outputStream);
         }
 	}
 }

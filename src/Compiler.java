@@ -14,32 +14,33 @@
 
 import ast.*;
 import lexer.*;
-import java.util.*;
 
+import java.io.*;
+import java.util.*;
 
 public class Compiler {
 
 	private Lexer lexer;
-//	private char token;
-//    private int  lexer.tokenPos;
     private char []input;
-//    private int flag = 0;
     private Hashtable<Character, Variable> symbolTable;
 	
-    public Program compile(char []p_input) {
+    public Program compile(char []p_input, FileOutputStream outputStream) {
         input = p_input;
-//        lexer.tokenPos = 0;
  		symbolTable = new Hashtable<Character, Variable>();
  		lexer = new Lexer(input);
  		
  		lookForVariables();
- 		
+
         lexer.nextToken();
+        
+//        System.out.println("Compile method, after calling lookForVariables method.");
+// 		System.out.println("Token: " + lexer.token);
+//        System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
 
         Program e = program();
         
-        if (lexer.tokenPos != input.length) {
-            lexer.error();
+        if (lexer.tokenPos > input.length) {
+            lexer.error("Final do arquivo não definido corretamente.");
         }
 
         return e;
@@ -86,25 +87,37 @@ public class Compiler {
         Line line = null;
         ArrayList lines = null;
         
-    	while (((input[lexer.tokenPos - 1] == 'w') && 
-    			(input[lexer.tokenPos] == 'r') && 
-    			(input[lexer.tokenPos + 1] == 'i') && 
-    			(input[lexer.tokenPos + 2] == 't') && 
-    			(input[lexer.tokenPos + 3] == 'e')) || 
-    			(Character.isLetter(lexer.token))) {
-            line = line();
+//    	while (((input[lexer.tokenPos - 1] == 'w') && 
+//    			(input[lexer.tokenPos] == 'r') && 
+//    			(input[lexer.tokenPos + 1] == 'i') && 
+//    			(input[lexer.tokenPos + 2] == 't') && 
+//    			(input[lexer.tokenPos + 3] == 'e')) || 
+//    			(Character.isLetter(lexer.token))) {
+        while (input[lexer.tokenPos] != '\0') {
+//    		System.out.println("Program method.");
+    		line = line();
 
             if (lines == null) {
                 lines = new ArrayList<Line>();
             }
-
+            
             lines.add(line);
 
+//            System.out.println("Token: " + lexer.token);
+//            System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
+            
             if (lexer.token == ';') {
+//            	System.out.println("nextToken chamado.");
                 lexer.nextToken();
             }
+//            if (lexer.token == '\n') {
+//            	System.out.println("TOKEN COM \\N!!!");
+//            }
+//            System.out.println("Token: " + lexer.token);
+//            System.out.println("input[" + lexer.tokenPos + "]: " + input[lexer.tokenPos]);
 
             if (lexer.tokenPos >= input.length) {
+//            	System.out.println("BLABLABLA.\n");
                 break;
             }
         }
@@ -117,25 +130,26 @@ public class Compiler {
         Write write = null;
         Atrib atrib = null;
 
+//        System.out.println("Line method.\n");
         if ((input[lexer.tokenPos - 1] == 'w') && (input[lexer.tokenPos] == 'r') && (input[lexer.tokenPos + 1] == 'i') && (input[lexer.tokenPos + 2] == 't') && (input[lexer.tokenPos + 3] == 'e')) {
             // comando write
             write = write();
 
             if (lexer.token != ';') {
-                lexer.error();
+                lexer.error("';' esperado.");
             }
         }
         else {
             if (Character.isLetter(lexer.token)) {
-                // atribuição
+                // atribuicao
                 atrib = atrib();
 
                 if (lexer.token != ';') {
-                    lexer.error();
+                    lexer.error("';' esperado.");
                 }
             }
             else {
-                lexer.error();
+                lexer.error("Variável esperada na atribuição.");
             }
         }
 
@@ -159,11 +173,11 @@ public class Compiler {
                 expr = expr();
             }
             else {
-                lexer.error();
+                lexer.error("Caractere inválido. Variável ou número esperado.");
             }
 
             if (lexer.token != ')') {
-                lexer.error();
+                lexer.error("')' esperado.");
             }
             
             lexer.nextToken();
@@ -171,7 +185,7 @@ public class Compiler {
             return new Write(expr);
         }
         else {
-            lexer.error();
+            lexer.error("'(' esperado.");
         }
 
         return new Write(expr);
@@ -186,21 +200,21 @@ public class Compiler {
             var = var();
         }
         else {
-            lexer.error();
+            lexer.error("Variável esperada na atribuição.");
         }
 
         if (lexer.token == '=') {
             lexer.nextToken();
         }
         else {
-            lexer.error();
+            lexer.error("'=' esperado.");
         }
 
         if ((Character.isLetter(lexer.token)) || (Character.isDigit(lexer.token))) {
             expr = expr();
         }
         else {
-            lexer.error();
+            lexer.error("Caractere inválido. Variável ou número esperado.");
         }
 
         return new Atrib(var, expr);
@@ -215,7 +229,7 @@ public class Compiler {
             t = t();
         }
         else {
-            lexer.error();
+            lexer.error("Caractere inválido. Variável ou número esperado.");
         }
 
         if (lexer.token == '+') {
@@ -237,7 +251,7 @@ public class Compiler {
                 t = t();
             }
             else {
-                lexer.error();
+                lexer.error("Caractere inválido. Variável ou número esperado.");
             }
 
             if (lexer.token == '+') {
@@ -257,7 +271,7 @@ public class Compiler {
             f = f();
         }
         else {
-            lexer.error();
+            lexer.error("Caractere inválido. Variável ou número esperado.");
         }
 
         if (lexer.token == '*') {
@@ -279,7 +293,7 @@ public class Compiler {
                 f = f();
             }
             else {
-                lexer.error();
+                lexer.error("Caractere inválido. Variável ou número esperado.");
             }
 
             if (lexer.token == '*') {
@@ -303,7 +317,7 @@ public class Compiler {
                 var = var();
             }
             else {
-                lexer.error();
+                lexer.error("Variável esperada.");
             }
         }
 
@@ -319,7 +333,7 @@ public class Compiler {
             number.add(digit());
         }
         else {
-            lexer.error();
+            lexer.error("Número esperado.");
         }
 
         while (Character.isDigit(lexer.token)) {
@@ -339,7 +353,7 @@ public class Compiler {
             lexer.nextToken();
         }
         else {
-            lexer.error();
+            lexer.error("Número esperado.");
         }
 
         return aux;
@@ -354,43 +368,9 @@ public class Compiler {
             lexer.nextToken();
         }
         else {
-            lexer.error();
+            lexer.error("Letra esperada.");
         }
         
         return aux;
-    }
-
-//    private void nextToken() {
-//        while (lexer.tokenPos < input.length && input[lexer.tokenPos] == ' ') {
-//            if (input[lexer.tokenPos] == ' ' && flag == 1) {
-//                flag = 2;
-//            }
-//
-//            lexer.tokenPos++;
-//        }
-//        
-//        if((flag == 2) && ((Character.isDigit(input[lexer.tokenPos])))) {
-//              lexer.error();
-//        }
-//
-//        flag = 0;
-//
-//        if (lexer.tokenPos < input.length) {
-//            token = input[lexer.tokenPos];
-//            lexer.tokenPos++;
-//        }
-//    }
-//    
-//    private void error() {
-//        if ( lexer.tokenPos == 0 ) 
-//          lexer.tokenPos = 1; 
-//        else 
-//          if ( lexer.tokenPos >= input.length )
-//            lexer.tokenPos = input.length;
-//        
-//        String strInput = new String( input, lexer.tokenPos - 1, input.length - lexer.tokenPos + 1 );
-//        String strError = "Error at \"" + strInput + "\"";
-//        System.out.println( strError );
-//        throw new RuntimeException(strError);
-//    }      
+    }      
 }

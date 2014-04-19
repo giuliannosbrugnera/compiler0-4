@@ -1,19 +1,25 @@
 package ast;
 
-public class Write extends BaseClass
-{
+import java.io.*;
+
+public class Write {
 	private Expr expression;
 
-	public Write(Expr expression)
-	{
+	public Write(Expr expression) {
 		this.expression = expression;
 	}
 
-	public void genC()
-	{
+	public void genC(FileOutputStream outputStream) {
 		System.out.print("\tprintf (");
         System.out.print("\"%d\", ");
-        expression.genC();
-        System.out.print(")");
+		try {
+			outputStream.write("\tprintf (\"%d\", ".getBytes());
+	        expression.genC(outputStream);
+	        System.out.print(")");
+	        outputStream.write(")".getBytes());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

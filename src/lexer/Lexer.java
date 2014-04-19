@@ -2,7 +2,6 @@ package lexer;
 
 public class Lexer {
 	
-	// current token
     public char token;
     private String stringValue;
     private int numberValue;
@@ -10,25 +9,26 @@ public class Lexer {
     public int flag = 0;
     
     public int  tokenPos;
-      //  input[lastTokenPos] is the last character of the last token
     private int lastTokenPos;
-      // program given as input - source code
     private char []input;
     
-    // number of current line. Starts with 1
     private int lineNumber;
     
     public Lexer(char []input) {
         this.input = input;
           // add an end-of-file label to make it easy to do the lexer
-//        input[input.length - 1] = '\0';
+        input[input.length - 1] = '\0';
+        
+//        System.out.println("Input:\n" + new String(input) + "\nLexer method.\n");
           // number of the current line
         lineNumber = 1;
         tokenPos = 0;
     }
 
     public void nextToken() {
-        while (tokenPos < input.length && input[tokenPos] == ' ') {
+        while ((tokenPos < input.length) && 
+        	   ((input[tokenPos] == ' ') ||
+        	   (input[tokenPos] == '\n'))) {
             if (input[tokenPos] == ' ' && flag == 1) {
                 flag = 2;
             }
@@ -36,8 +36,8 @@ public class Lexer {
             tokenPos++;
         }
         
-        if((flag == 2) && ((Character.isDigit(input[tokenPos])))) {
-              error();
+        if ((flag == 2) && ((Character.isDigit(input[tokenPos])))) {
+              error("Número esperado");
         }
 
         flag = 0;
@@ -87,7 +87,7 @@ public class Lexer {
        return charValue;
     }
     
-    public void error() {
+    public void error(String errorCause) {
         if ( tokenPos == 0 ) {
           tokenPos = 1; 
         }
@@ -100,6 +100,7 @@ public class Lexer {
         String strInput = new String( input, tokenPos - 1, input.length - tokenPos + 1 );
         String strError = "Error at \"" + strInput + "\"";
         System.out.println( strError );
+        System.out.println(errorCause);
         throw new RuntimeException(strError);
     }
 }

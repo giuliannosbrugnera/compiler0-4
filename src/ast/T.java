@@ -1,23 +1,21 @@
 package ast;
 
-public class T extends BaseClass
-{
+import java.io.*;
+
+public class T {
 	private F f;
 	private Ti ti;
 
-	public T(F f, Ti ti)
-	{
+	public T(F f, Ti ti) {
 		this.f = f;
 		this.ti = ti;
 	}
 
-	public void genC()
-	{
-		f.genC();
+	public void genC(FileOutputStream outputStream) {
+		f.genC(outputStream);
 
-		if (ti != null)
-		{
-			ti.genC();
+		if (ti != null) {
+			ti.genC(outputStream);
 		}
 	}
 }

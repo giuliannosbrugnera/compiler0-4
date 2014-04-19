@@ -1,28 +1,31 @@
 package ast;
 
-public class Ei extends BaseClass
-{
+import java.io.*;
+
+public class Ei {
 	private T t;
 	private Ei ei;
 
-	public Ei(T t, Ei ei)
-	{
+	public Ei(T t, Ei ei) {
 		this.t = t;
 		this.ei = ei;
 	}
 
-	public void genC()
-	{
+	public void genC(FileOutputStream outputStream) {
 		System.out.print(" + ");
-
-		if (t != null)
-		{
-			t.genC();
+		try {
+			outputStream.write(" + ".getBytes());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		if (ei != null)
-		{
-			ei.genC();
+		if (t != null) {
+			t.genC(outputStream);
+		}
+		
+		if (ei != null) {
+			ei.genC(outputStream);
 		}
 	}
 }

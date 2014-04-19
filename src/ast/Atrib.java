@@ -1,19 +1,26 @@
 package ast;
 
-public class Atrib extends BaseClass
-{
+import java.io.*;
+
+public class Atrib {
 	private char variable;
 	private Expr expression;
 
-	public Atrib(char variable, Expr expression)
-	{
+	public Atrib(char variable, Expr expression) {
 		this.variable = variable;
 		this.expression = expression;
 	}
 
-	public void genC()
-	{
+	public void genC(FileOutputStream outputStream) {
+		String content;
 		System.out.print("\t" + variable + " = ");
-        expression.genC();
+		try {
+			content = "\t" + variable + " = ";
+			outputStream.write(content.getBytes());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+        expression.genC(outputStream);
 	}
 }
