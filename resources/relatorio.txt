@@ -1,28 +1,47 @@
-============================================================
+==================================================================
+    
+    Universidade Federal de Sao Carlos - UFSCar, Sorocaba
 
-Relatório Compilador 0-4
+    Disciplina: Compiladores
+    Prof. Tiemi Christine Sakata
 
-Giulianno Raphael Sbrugnera - 408093
-Matheus Casarin Paez 		- 438308
+    Relatório - Compilador 0-4
 
-============================================================
+    Autor: Giulianno Raphael Sbrugnera RA: 408093
+    Autor: Matheus Casarin Paez        RA: 438308
+ 
+==================================================================
 
 
 
 ==============================
 ======== Visão Geral =========
 ==============================
-Nesta fase 04, há a criação da AST (Abstract Syntax Tree). Nossa estratégia foi criar uma classe abstrata geral, onde as demais classes herdam
-o seu método genC(), que cuida da geração do código em linguagem C. Cada sub classe implementa esse método de forma distinta e única.
-As classes são os símbolos não-terminais da nossa gramática.
+Nesta fase 04 há a implementação do compilador completo. Suas funcionalidades são:
+- análise léxica;
+- análise sintática;
+- análise semântica;
+- geração de código em linguagem C;
+- emissão de mensagens de erro.
 
-Para o analisador sintático, nesta fase 4, foi utilizado a construção de uma AST (Abstract Syntax Tree), como mencionado acima.
+Juntamente com os arquivos fontes do projeto, incorporamos cinco arquivos de teste, cada um com determinadas características:
+- o primeiro e o segundo arquivo mostram a geração de código em linguagem C de uma linguagem correta;
+- o terceiro arquivo deixa claro que o compilador consegue ignorar espaços em branco e quebra-linhas.
+	- emite erro de domínio semântico, pois falta um parênteses de abertura na entrada.
+- o quarto arquivo mostra que tão logo um erro é achado, o compilador emite-o pelo terminal.
+	- emite erro de domínio sintático, pois deveria haver uma variável ou um número dentro de uma atribuição;
+- o quinto arquivo emite erro de domínio léxico, pois a palavra reservada 'write' está escrita errôneamente.
+	- é importante notar aqui que, de acordo com a nossa definição da linguagem, uma variável possui somente uma letra, de 'a' a 'z'.
+	  Logo, há a necessidade de emissão do erro, pois não poderia ser uma variável.
 
-Há um método denominado error, para o caso de haver algum erro na entrada.
+Pensando em ter uma melhor organização dos arquivos e do código em si, dois novos pacotes foram criados: lexer, juntamente da classe Lexer, e
+o pacote resources, onde estão localizados os arquivos de teste.
+Os métodos referentes à análise léxica, como nextToken, assim como os atributos, foram passados para a classe Lexer.
 
-Para o analisador léxico, foi utilizado o método nextToken. Este método passa para a variável token o próximo token válido. Ele também trata o caso de haver inúmeros espaços entre dois dígitos em uma expressão, configurando um erro.
+A classe BaseClass, que servia como uma classe base, foi removida, pois sua utilização não fazia tanto sentido.
 
-Não especificamos com parênteses a precedência das operações, mas o nosso compilador segue a precedência estipulada, ou seja, o operador '*' possui uma maior precedência em relação ao operador '+'.
+Não especificamos com parênteses a precedência das operações, mas o nosso compilador segue a precedência estipulada, ou seja, o operador '*'
+possui uma maior precedência em relação ao operador '+'.
 
 
 
