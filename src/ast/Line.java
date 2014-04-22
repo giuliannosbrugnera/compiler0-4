@@ -13,20 +13,14 @@ public class Line {
 		this.atrib = atrib;
 	}
 
-	public void genC(FileOutputStream outputStream) {
+	public void genC() {
 		if (write != null) {
-			write.genC(outputStream);
+			write.genC();
 		}
 		else {
-			atrib.genC(outputStream);
+			atrib.genC();
 		}
 		
         System.out.println(";");
-        try {
-        	outputStream.write(";\n".getBytes());
-        }
-        catch (IOException e) {
-        	e.printStackTrace();
-        }
 	}
 }

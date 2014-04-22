@@ -12,16 +12,8 @@ public class Atrib {
 		this.expression = expression;
 	}
 
-	public void genC(FileOutputStream outputStream) {
-		String content;
+	public void genC() {
 		System.out.print("\t" + variable + " = ");
-		try {
-			content = "\t" + variable + " = ";
-			outputStream.write(content.getBytes());
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-        expression.genC(outputStream);
+        expression.genC();
 	}
 }

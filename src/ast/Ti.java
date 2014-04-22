@@ -12,21 +12,15 @@ public class Ti {
 		this.ti = ti;
 	}
 
-	public void genC(FileOutputStream outputStream) {
+	public void genC() {
 		System.out.print(" * ");
-		try {
-			outputStream.write(" * ".getBytes());
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		if (f != null) {
-			f.genC(outputStream);
+			f.genC();
 		}
 
 		if (ti != null) {
-			ti.genC(outputStream);
+			ti.genC();
 		}
 	}
 }

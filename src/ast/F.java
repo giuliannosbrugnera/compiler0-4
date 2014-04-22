@@ -13,21 +13,14 @@ public class F {
 		this.variable = variable;
 	}
 
-	public void genC(FileOutputStream outputStream) {
-		try {
-			if (number != null) {
-				for (Character c:number) {
-		            System.out.print(c);
-		            outputStream.write(Character.toString(c).getBytes());
-		        }
-			}
-			else {
-				System.out.print(variable);
-				outputStream.write(Character.toString(variable).getBytes());
-			}
+	public void genC() {
+		if (number != null) {
+			for (Character c:number) {
+	            System.out.print(c);
+	        }
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		else {
+			System.out.print(variable);
 		}
 	}
 }

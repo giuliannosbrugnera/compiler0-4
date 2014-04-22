@@ -12,11 +12,11 @@ public class T {
 		this.ti = ti;
 	}
 
-	public void genC(FileOutputStream outputStream) {
-		f.genC(outputStream);
+	public void genC() {
+		f.genC();
 
 		if (ti != null) {
-			ti.genC(outputStream);
+			ti.genC();
 		}
 	}
 }

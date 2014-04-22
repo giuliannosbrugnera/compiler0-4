@@ -12,11 +12,11 @@ public class Expr {
 		this.ei = ei;
 	}
 
-	public void genC(FileOutputStream outputStream) {
-        t.genC(outputStream);
+	public void genC() {
+        t.genC();
 
         if (ei != null) {
-        	ei.genC(outputStream);
+        	ei.genC();
         }
 	}
 }

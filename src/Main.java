@@ -25,13 +25,11 @@ public class Main {
     	File file = null;
         FileReader stream = null;
         Program program = null;
-        FileOutputStream outputStream = null;
         Compiler compiler = null;
 
-        if (args.length != 2)  {
-            System.out.println("Usage:\n   Main input output");
+        if (args.length != 1)  {
+            System.out.println("Usage:\nMain input");
             System.out.println("input is the file to be compiled");
-            System.out.println("output is the file where the generated code will be stored");
         }
         else {
     		file = new File(args[0]);
@@ -74,16 +72,7 @@ public class Main {
             }
 
             compiler = new Compiler();
-            // utilização do arquivo de saída
-            try { 
-            	outputStream = new FileOutputStream(args[1]);
-            } 
-            catch (IOException e) {
-                System.out.println("File " + args[1] + " could not be opened for writing");
-                throw new RuntimeException();
-            }
-              
-            // the generated code goes to a file and so are the errors
+
             try {   
             	program  = compiler.compile(input);
             } 
@@ -94,15 +83,7 @@ public class Main {
             }
             
             if (program != null) {
-            	program.genC(outputStream);
-            	try {
-            		outputStream.close();
-            		System.out.println("Programa finalizado com êxito.");
-            		System.out.println("Você encontrará o arquivo com o código gerado em linguagem C no caminho relativo " + args[1] + ".");
-            	}
-            	catch (IOException e) {
-            		e.printStackTrace();
-            	}
+            	program.genC();
             }
         }
     }

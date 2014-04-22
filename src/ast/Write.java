@@ -10,17 +10,10 @@ public class Write {
 		this.expression = expression;
 	}
 
-	public void genC(FileOutputStream outputStream) {
+	public void genC() {
 		System.out.print("\tprintf (");
         System.out.print("\"%d\", ");
-		try {
-			outputStream.write("\tprintf (\"%d\", ".getBytes());
-	        expression.genC(outputStream);
-	        System.out.print(")");
-	        outputStream.write(")".getBytes());
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+        expression.genC();
+        System.out.print(")");
 	}
 }
