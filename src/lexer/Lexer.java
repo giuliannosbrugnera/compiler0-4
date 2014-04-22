@@ -1,29 +1,18 @@
 package lexer;
 
-import java.io.*;
-
 public class Lexer {
 	
     public char token;
-    private String stringValue;
-    private int numberValue;
-    private char charValue;
     public int flag = 0;
     
     public int  tokenPos;
     private int lastTokenPos;
     private char []input;
     
-    private int lineNumber;
-    
     public Lexer(char []input) {
         this.input = input;
           // add an end-of-file label to make it easy to do the lexer
         input[input.length - 1] = '\0';
-        
-//        System.out.println("Input:\n" + new String(input) + "\nLexer method.\n");
-          // number of the current line
-        lineNumber = 1;
         tokenPos = 0;
     }
 
@@ -49,11 +38,6 @@ public class Lexer {
             tokenPos++;
         }
     }
-
-    // return the line number of the last token got with getToken()
-    public int getLineNumber() {
-        return lineNumber;
-    }
         
     public String getCurrentLine() {
         int i = lastTokenPos;
@@ -78,23 +62,13 @@ public class Lexer {
         	i++;
         }
           // go to the end of the line putting it in variable line
-        while ((input[i] != '\0') && (input[i] != '\n') && (input[i] != '\r' )) {
+        while ((input[i] != '\0') &&
+        	   (input[i] != '\n') &&
+        	   (input[i] != '\r' )) {
             line.append( input[i] );
             i++;
         }
         return line.toString();
-    }
-
-    public String getStringValue() {
-    	return stringValue;
-    }
-    
-    public int getNumberValue() {
-    	return numberValue;
-    }
-    
-    public char getCharValue() {
-    	return charValue;
     }
     
     public void error(String errorCause) {

@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.*;
-
 // Atrib ::= var '=' expr
 public class Atrib {
 	private char variable;

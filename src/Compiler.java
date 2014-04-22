@@ -106,6 +106,8 @@ public class Compiler {
     private Line line() {
         Write write = null;
         Atrib atrib = null;
+        // Contorna possível ArrayIndexOutOfBounds exception
+        int prev = ((lexer.tokenPos - 2) >= 0) ? (lexer.tokenPos - 2) : 0;
 
         if ((input[lexer.tokenPos - 1] == 'w') &&
         	(input[lexer.tokenPos] == 'r') && 
@@ -121,12 +123,18 @@ public class Compiler {
         }
         else {
             if (Character.isLetter(lexer.token)) {
-                // atribuicao
-                atrib = atrib();
-
-                if (lexer.token != ';') {
-                    lexer.error("';' esperado.\n");
-                }
+            	if ((Character.isLetter(input[prev]) && (input[prev] != lexer.token)) ||
+            		(Character.isLetter(input[lexer.tokenPos]))) {
+            		lexer.error("Comando não definido.\n");
+            	}
+            	else {
+	                // atribuicao
+	                atrib = atrib();
+	
+	                if (lexer.token != ';') {
+	                    lexer.error("';' esperado.\n");
+	                }
+            	}
             }
             else {
                 lexer.error("Variável esperada na atribuição.\n");

@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.*;
-
 // ti ::= '*' f ti | vazio
 public class Ti {
 	private F f;

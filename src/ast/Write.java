@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.*;
-
 // Write ::= 'Write' '(' expr ')'
 public class Write {
 	private Expr expression;

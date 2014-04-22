@@ -1,7 +1,5 @@
 package ast;
 
-import java.io.*;
-
 // expr ::= t ei
 public class Expr {
 	private T t;
