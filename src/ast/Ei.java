@@ -2,6 +2,7 @@ package ast;
 
 import java.io.*;
 
+// ei ::= '+' t ei | vazio
 public class Ei {
 	private T t;
 	private Ei ei;

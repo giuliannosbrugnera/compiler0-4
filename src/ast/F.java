@@ -3,6 +3,7 @@ package ast;
 import java.io.*;
 import java.util.*;
 
+// f ::= number | var
 public class F {
 	private ArrayList<Character> number;
 	private char variable;

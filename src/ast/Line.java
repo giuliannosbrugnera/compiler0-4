@@ -2,6 +2,7 @@ package ast;
 
 import java.io.*;
 
+// Line ::= (Write | Atrib) ';'
 public class Line {
 	
 	private Write write;

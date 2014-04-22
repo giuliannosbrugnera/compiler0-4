@@ -3,6 +3,7 @@ package ast;
 import java.io.*;
 import java.util.*;
 
+// Program ::= {Line}
 public class Program
 {	
 	private ArrayList<Line> list;

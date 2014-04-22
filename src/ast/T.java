@@ -2,6 +2,7 @@ package ast;
 
 import java.io.*;
 
+// t ::= f ti
 public class T {
 	private F f;
 	private Ti ti;

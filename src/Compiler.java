@@ -5,7 +5,7 @@
     Disciplina: Compiladores
     Prof. Tiemi Christine Sakata
 
-    Compilador 0-3
+    Compilador 0-4
 
     Autor: Giulianno Raphael Sbrugnera RA: 408093
     Autor: Matheus Casarin Paez        RA: 438308

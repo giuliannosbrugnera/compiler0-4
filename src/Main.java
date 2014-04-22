@@ -5,7 +5,7 @@
     Disciplina: Compiladores
     Prof. Tiemi Christine Sakata
 
-    Compilador 0-3
+    Compilador 0-4
 
     Autor: Giulianno Raphael Sbrugnera RA: 408093
     Autor: Matheus Casarin Paez        RA: 438308
@@ -56,7 +56,7 @@ public class Main {
             try {
             	numChRead = stream.read( input, 0, (int ) file.length() );
             } 
-            catch ( IOException e ) {
+            catch (IOException e) {
                 System.out.println("Error reading file " + args[0]);
                 throw new RuntimeException();
             }
@@ -74,6 +74,7 @@ public class Main {
             }
 
             compiler = new Compiler();
+            // utilização do arquivo de saída
             try { 
             	outputStream = new FileOutputStream(args[1]);
             } 
@@ -81,8 +82,6 @@ public class Main {
                 System.out.println("File " + args[1] + " could not be opened for writing");
                 throw new RuntimeException();
             }
-            
-            program = null;
               
             // the generated code goes to a file and so are the errors
             try {   
@@ -90,17 +89,8 @@ public class Main {
             } 
             catch (RuntimeException e) {
             	System.out.println("Ocorreu um erro durante a geração do código em linguagem C.");
-//        		System.out.println("Você encontrará o log do erro no caminho relativo " + args[1] + ".");
             	System.out.println("Log error:");
-//                error = e.toString();
                 e.printStackTrace();
-//                try {
-//                	System.out.println("Erro:\n" + error);
-//                    outputStream.write(error.getBytes());
-//                }
-//                catch (IOException err) {
-//                	err.printStackTrace();
-//                }
             }
             
             if (program != null) {
