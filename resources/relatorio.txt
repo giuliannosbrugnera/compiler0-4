@@ -96,7 +96,5 @@ A seguir descreveremos o que cada símbolo representa.
 ==============================
 ======== Dificuldades ========
 ==============================
-A nossa maior dificuldade foi realmente montar a AST. Não sabíamos se o correto era continuar com a mesma gramática utilizada anteriormente
-ou se havia a necessidade da criação de uma nova. Por fim, decidimos continuar com a mesma, o que resultou na completude do trabalho.
-Da mesma maneira, demoramos a perceber que uma classe base geral era necessária. Assim, isso facilitaria com que todas as sub classes
-possuíssem o mesmo método gerador de código em linguagem C.
+A nossa maior dificuldade foi trabalhar com entrada e saída de arquivos. Nossa ideia inicial era gerar um arquivo
+de saída de acordo com o arquivo de entrada, mas em casos específicos isso não funcionava.
