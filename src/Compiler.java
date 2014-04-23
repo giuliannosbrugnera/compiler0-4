@@ -15,7 +15,6 @@
 import ast.*;
 import lexer.*;
 
-import java.io.*;
 import java.util.*;
 
 public class Compiler {
@@ -29,7 +28,6 @@ public class Compiler {
  		this.symbolTable = new Hashtable<Character, Variable>();
  		this.lexer = new Lexer(input);
  		
- 		lookForVariables();
         lexer.nextToken();
         Program e = program();
         
@@ -40,42 +38,6 @@ public class Compiler {
         return e;
     }
     
-    // Metodo que percorre toda a entrada. Quando encontra uma variavel,
-    // ela eh adicionada a tabela hash de variaveis.
-    // Ao final do metodo, a posicao do token eh setada para zero.
-    private void lookForVariables() {
-    	Variable variable = null;
-    	boolean var;
-    	
-    	while (lexer.tokenPos < input.length) {
-    		var = true;
-    		lexer.nextToken();
-    		
-    		// Necessario verificar se a letra nao faz parte do comando
-			// 'write'. Pela gramatica, uma variavel eh composta por
-    		// apenas uma letra, logo nao deve haver letras antes ou
-    		// depois da letra da variavel.
-    		if (Character.isLetter(lexer.token)) {
-    			if (lexer.tokenPos - 2 >= 0) {
-    				if (Character.isLetter(input[lexer.tokenPos - 2])) {
-    					var = false;
-    				}
-    			}
-    			if (Character.isLetter(input[lexer.tokenPos])) {
-    				var = false;
-    			}
-    			
-    			if (var) {
-					// variavel
-    				variable = new Variable(lexer.token);
-    				symbolTable.put(lexer.token, variable);
-    			}
-    		}
-    	}
-    	
-    	lexer.tokenPos = 0;
-    }
-
     // Program ::= {Line}
     private Program program() {
         Line line = null;
@@ -296,13 +258,16 @@ public class Compiler {
     private F f() {
         ArrayList<Character> number = null;
         char var = 0;
-
+        Variable variable = null;
+        
         if (Character.isDigit(lexer.token)) {
             number = number();
         }
         else {
             if (Character.isLetter(lexer.token)) {
                 var = var();
+                variable = new Variable(var);
+				symbolTable.put(var, variable);
             }
             else {
                 lexer.error("Variável esperada.\n");
